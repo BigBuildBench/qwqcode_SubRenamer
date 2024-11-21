@@ -1,0 +1,223 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SubRenamer.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:common="clr-namespace:SubRenamer.Common"
+        xmlns:helper="clr-namespace:SubRenamer.Helper"
+        mc:Ignorable="d"
+        Width="1000"
+        Height="550"
+        MinHeight="550"
+        WindowStartupLocation="CenterScreen"
+        x:DataType="vm:MainViewModel"
+        x:Class="SubRenamer.Views.MainWindow"
+        Icon="/Assets/icon.ico"
+        Title="{DynamicResource App.Strings.AppTitle}"
+        DragDrop.AllowDrop="True">
+
+    <Design.DataContext>
+        <vm:MainViewModel/>
+    </Design.DataContext>
+
+    <Window.Styles>
+        <Style Selector="Button.OpBtn">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="40"/>
+        </Style>
+        
+        <Style Selector="Button.TopMenuBtn">
+            <Setter Property="Background" Value="Transparent"></Setter>
+            <Setter Property="Foreground" Value="#828282"></Setter>
+            <Setter Property="Padding" Value="5 0"></Setter>
+            <Setter Property="FontSize" Value="13"></Setter>
+        </Style>
+        <Style Selector="Button.TopMenuBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent"></Setter>
+        </Style>
+    </Window.Styles>
+    
+    <Window.Resources>
+        <helper:BoolToTextConverter x:Key="BoolToTextConverter" />
+    </Window.Resources>
+    
+    <Grid>
+        <DockPanel>
+            <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
+                <Menu Grid.Column="0">
+                    <MenuItem Header="{DynamicResource App.Strings.MenuFile}">
+                        <MenuItem Header="{DynamicResource App.Strings.MenuOpenFiles}" InputGesture="{OnPlatform Ctrl+O, macOS=⌘+O}" HotKey="{OnPlatform Ctrl+O, macOS=⌘+O}" Command="{Binding OpenFileCommand}" />
+                        <MenuItem Header="{DynamicResource App.Strings.MenuOpenFolder}" InputGesture="{OnPlatform Ctrl+Shift+O, macOS=⌘+Shift+O}" HotKey="{OnPlatform Ctrl+Shift+O, macOS=⌘+Shift+O}" Command="{Binding OpenFolderCommand}" />
+                        <Separator/>
+                        <MenuItem Header="{DynamicResource App.Strings.MenuRematch}" InputGesture="{OnPlatform Ctrl+R, macOS=⌘+R}" HotKey="{OnPlatform Ctrl+R, macOS=⌘+R}" />
+                        <MenuItem Header="{DynamicResource App.Strings.MenuClearList}" InputGesture="{OnPlatform Ctrl+N, macOS=⌘+N}" HotKey="{OnPlatform Ctrl+N, macOS=⌘+N}" Command="{Binding ClearAllCommand}" />
+                    </MenuItem>
+                    <MenuItem Header="{DynamicResource App.Strings.MenuRules}" Command="{Binding OpenRulesCommand}">
+                    </MenuItem>
+                    <MenuItem Header="{DynamicResource App.Strings.MenuSettings}" HotKey="{OnPlatform 'Ctrl+,', macOS='⌘+,'}" InputGesture="{OnPlatform 'Ctrl+,', macOS='⌘+,'}" Command="{Binding OpenSettingsCommand}">
+                    </MenuItem>
+                </Menu>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="6,0" Spacing="0">
+                    <Button Classes="TopMenuBtn" Command="{Binding ToggleTopmostCommand}">
+                        <StackPanel>
+                            <TextBlock IsVisible="{Binding WinTopmost}" Text="{DynamicResource App.Strings.MenuTopmost}" />
+                            <TextBlock IsVisible="{Binding !WinTopmost}" Text="{DynamicResource App.Strings.MenuNotTopmost}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="TopMenuBtn" Command="{Binding OpenVersionLinkCommand}">
+                        <TextBlock Text="{Binding CurrVersionText}" />
+                    </Button>
+                    <Button Classes="TopMenuBtn" Foreground="{StaticResource SystemAccentColor}" Command="{Binding OpenRulesCommand}">
+                        <TextBlock Text="{Binding CurrMatchModeText}" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+            
+            <SplitView
+                DockPanel.Dock="Bottom"
+                IsPaneOpen="True"
+                DisplayMode="Inline"
+                PanePlacement="Right"
+                OpenPaneLength="170">
+            
+                <!-- Data Grid -->
+                <Grid>
+                    <DataGrid Name="DataGrid"
+                              Grid.Row="0"
+                              Margin="0"
+                              ItemsSource="{Binding MatchList}"
+                              SelectionChanged="DataGrid_OnSelectionChanged"
+                              SelectionMode="Extended"
+                              CanUserSortColumns="False"
+                              IsReadOnly="True"
+                              CanUserResizeColumns="True"
+                              GridLinesVisibility="All"
+                              BorderThickness="1"
+                              BorderBrush="{StaticResource SystemControlTransientBorderBrush}"
+                              IsVisible="{Binding !ShowRenameTasks}">
+                    
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="{DynamicResource App.Strings.DataGridMatch}" Width="100" Binding="{Binding Key}"/>
+                            <DataGridTemplateColumn Header="{DynamicResource App.Strings.DataGridVideo}" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding VideoName}"
+                                                   ToolTip.Tip="{Binding VideoName}"
+                                                   VerticalAlignment="Center" Padding="10 0" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="{DynamicResource App.Strings.DataGridSubtitle}" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding SubtitleName}"
+                                                   ToolTip.Tip="{Binding SubtitleName}"
+                                                   VerticalAlignment="Center" Padding="10 0" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="{DynamicResource App.Strings.DataGridStatus}" Width="100" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding StatusText}"
+                                                   ToolTip.Tip="{Binding StatusText}"
+                                                   VerticalAlignment="Center" Padding="10 0" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                        
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="{DynamicResource App.Strings.ContextMenuEdit}" HotKey="F3" InputGesture="F3" Command="{Binding EditItemCommand}" />
+                                <Separator/>
+                                <MenuItem Header="{DynamicResource App.Strings.ContextMenuDelete}" HotKey="Delete" InputGesture="Delete" Command="{Binding DeleteItemCommand}" />
+                                <MenuItem Header="{DynamicResource App.Strings.ContextMenuDropVideo}" Command="{Binding DropItemsFieldCommand}" CommandParameter="{x:Static common:FileType.Video}" />
+                                <MenuItem Header="{DynamicResource App.Strings.ContextMenuDropSubtitle}" Command="{Binding DropItemsFieldCommand}" CommandParameter="{x:Static common:FileType.Subtitle}" />
+                                <Separator/>
+                                <MenuItem Header="{DynamicResource App.Strings.ContextMenuSelectAll}" HotKey="{OnPlatform Ctrl+A, macOS=⌘+A}" InputGesture="{OnPlatform Ctrl+A, macOS=⌘+A}" Name="SelectAllMenuItem" Click="SelectAllMenuItem_OnClick" />
+                                <Separator/>
+                                <MenuItem Header="{DynamicResource App.Strings.ContextMenuRevealVideo}" Command="{Binding RevealFileInFolderCommand}" CommandParameter="video" />
+                                <MenuItem Header="{DynamicResource App.Strings.ContextMenuRevealSubtitle}" Command="{Binding RevealFileInFolderCommand}" CommandParameter="subtitle" />
+                                <Separator/>
+                                <MenuItem Header="{DynamicResource App.Strings.ContextMenuCopyRenameCommands}" HotKey="{OnPlatform Ctrl+Shift+C, macOS=⌘+Shift+C}" InputGesture="{OnPlatform Ctrl+Shift+C, macOS=⌘+Shift+C}" Command="{Binding CopyCommandsCommand}" />
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        
+                    </DataGrid>
+                    
+                    <DataGrid Name="DataGrid2"
+                              Grid.Row="0"
+                              VerticalAlignment="Stretch"
+                              Margin="0"
+                              ItemsSource="{Binding RenameTasks}"
+                              SelectionMode="Extended"
+                              CanUserSortColumns="False"
+                              IsReadOnly="True"
+                              CanUserResizeColumns="True"
+                              GridLinesVisibility="All"
+                              BorderThickness="1"
+                              BorderBrush="{StaticResource SystemControlTransientBorderBrush}"
+                              IsVisible="{Binding ShowRenameTasks}">
+                        
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="{DynamicResource App.Strings.DataGridOriginalFileName}" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding OriginName}"
+                                                   ToolTip.Tip="{Binding OriginName}"
+                                                   VerticalAlignment="Center" Padding="10 0" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="{DynamicResource App.Strings.DataGridModifiedFileName}" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding AlterName}"
+                                                   ToolTip.Tip="{Binding AlterName}"
+                                                   VerticalAlignment="Center" Padding="10 0" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="{DynamicResource App.Strings.DataGridStatus}" Width="100" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding StatusText}"
+                                                   ToolTip.Tip="{Binding StatusText}"
+                                                   VerticalAlignment="Center" Padding="10 0" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            
+                <SplitView.Pane>
+                    <!-- Operation buttons -->
+                    <StackPanel VerticalAlignment="Stretch" Spacing="5" Margin="10">
+                        <Button Classes="OpBtn" Content="{DynamicResource App.Strings.OpOpenFiles}" Command="{Binding OpenFileCommand}" />
+                        <Button Classes="OpBtn" Content="{DynamicResource App.Strings.OpOpenFolder}" Command="{Binding OpenFolderCommand}" />
+                        <Border Height="10" />
+                        <Button Classes="OpBtn" Content="{DynamicResource App.Strings.OpEdit}" Command="{Binding EditItemCommand}" />
+                        <Button Classes="OpBtn" Content="{DynamicResource App.Strings.OpDelete}" Command="{Binding DeleteItemCommand}" />
+                        <Border Height="10" />
+                        <Button Classes="OpBtn" Content="{DynamicResource App.Strings.OpMatch}" Command="{Binding PerformMatchCommand}" />
+                        <Button Classes="OpBtn" Content="{DynamicResource App.Strings.OpClearList}" Command="{Binding ClearAllCommand}" />
+                        <Border Height="10" />
+                        <Button Classes="OpBtn" Content="{DynamicResource App.Strings.OpRules}" Command="{Binding OpenRulesCommand}" />
+                        <Button Classes="OpBtn" Content="{DynamicResource App.Strings.OpSettings}" Command="{Binding OpenSettingsCommand}"  />
+                        <Border Height="10" />
+                        <StackPanel HorizontalAlignment="Stretch">
+                            <CheckBox Content="{DynamicResource App.Strings.OpPreview}" IsChecked="{Binding ShowRenameTasks}" />
+                            <Button Classes="OpBtn" Content="{DynamicResource App.Strings.OpRename}" Command="{Binding PerformRenameCommand}" />
+                        </StackPanel>
+                    </StackPanel>
+                </SplitView.Pane>
+            
+            </SplitView>
+        </DockPanel>
+        
+    </Grid>
+</Window>

@@ -1,0 +1,33 @@
+<Application xmlns="https://github.com/avaloniaui" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:SubRenamer"
+        x:Class="SubRenamer.App"
+        Name="SubRenamer"
+        RequestedThemeVariant="Default">
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Assets/Lang/zh-Hans.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+	
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+    </Application.Styles>
+    
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="{DynamicResource App.Strings.NativeMenuSettings}" Gesture="Meta+," Click="MenuSetting_OnClick" />
+            <NativeMenuItemSeparator />
+            <NativeMenuItem Header="{DynamicResource App.Strings.NativeMenuQuit}" Gesture="Meta+Q" Click="MenuQuit_OnClick" />
+        </NativeMenu>
+    </NativeMenu.Menu>
+</Application>

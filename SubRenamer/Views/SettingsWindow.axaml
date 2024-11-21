@@ -1,0 +1,99 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:SubRenamer.ViewModels"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        Width="500"
+        SizeToContent="Height"
+        x:Class="SubRenamer.Views.SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
+        Title="{DynamicResource App.Strings.SettingsTitle}">
+        
+        <Design.DataContext>
+                <vm:SettingsViewModel/>
+        </Design.DataContext>
+        
+        <Window.Styles>
+                <Style Selector="Button.hyperlink">
+                        <Setter Property="Template">
+                                <ControlTemplate>
+                                        <TextBlock Text="{TemplateBinding Content}" Foreground="{StaticResource SystemAccentColor}" TextDecorations="Underline">
+                                                <TextBlock.Styles>
+                                                        <Style Selector="TextBlock:pointerover">
+                                                                <Setter Property="Foreground" Value="{StaticResource SystemAccentColorLight1}"/>
+                                                        </Style>
+                                                </TextBlock.Styles>
+                                        </TextBlock>
+                                </ControlTemplate>
+                        </Setter>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                </Style>     
+        </Window.Styles>
+        
+        <StackPanel Margin="20">
+                <StackPanel Orientation="Horizontal" Spacing="15">
+                        <TextBlock Text="{DynamicResource App.Strings.SettingsLanguage}" FontSize="14" VerticalAlignment="Center" />
+                        <ComboBox MaxDropDownHeight="200" SelectedIndex="{Binding LanguageIndex}" ItemsSource="{Binding LanguageTitles}">
+                                <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                                <TextBlock Text="{Binding}" />
+                                        </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                        </ComboBox>
+                </StackPanel>
+                <Border Height="15" />
+                <Border BorderThickness=".5" BorderBrush="#D2D4D5"></Border>
+                <Border Height="15" />
+                <CheckBox IsChecked="{Binding BackupEnabled}" Content="{DynamicResource App.Strings.SettingsBackupOriginalSubtitles}" />
+                <TextBlock Text="{DynamicResource App.Strings.SettingsBackupHint}" Foreground="Gray" Margin="30 0 30 10" FontSize="13" Padding="0" TextWrapping="Wrap" />
+                <!-- <CheckBox>确认删除对话框</CheckBox> -->
+                <!-- <CheckBox>显示文件完整路径</CheckBox> -->
+                <CheckBox IsChecked="{Binding FileConflictFilter}" Content="{DynamicResource App.Strings.SettingsLanguageFilterDialog}" />
+                <TextBlock Text="{DynamicResource App.Strings.SettingsLanguageFilterHint}" Foreground="Gray" FontSize="13" Padding="0" Margin="30 0 30 10" TextWrapping="Wrap" />
+                <CheckBox IsChecked="{Binding KeepLangExt}" IsEnabled="{Binding !CustomLangExtEnabled}" Content="{DynamicResource App.Strings.SettingsKeepLanguageSuffix}" />
+                <TextBlock Text="{DynamicResource App.Strings.SettingsKeepLanguageSuffixHint}" Foreground="Gray" Margin="30 0 30 10" FontSize="13" Padding="0" TextWrapping="Wrap" />
+                <CheckBox IsChecked="{Binding CustomLangExtEnabled}" Content="{DynamicResource App.Strings.SettingsAddCustomSuffix}" />
+                <StackPanel Margin="30 0 0 0">
+                        <TextBlock Text="{DynamicResource App.Strings.SettingsAddCustomSuffixHint}" Foreground="Gray" FontSize="13" Padding="0" Margin="0 0 0 10" TextWrapping="Wrap" />
+                        <TextBox IsEnabled="{Binding CustomLangExtEnabled}" Watermark="{DynamicResource App.Strings.SettingsCustomSuffixWatermark}" Text="{Binding CustomLangExt}" />
+                </StackPanel>
+                <Border Height="15" />
+                <CheckBox IsChecked="{Binding FileClsExtAppendEnabled}" Content="{DynamicResource App.Strings.SettingsFileFormatExtension}" />
+                <TextBlock Text="{DynamicResource App.Strings.SettingsFileFormatExtensionHint}" Foreground="Gray" Margin="30 0 30 8" FontSize="13" Padding="0" TextWrapping="Wrap" />
+                <Grid IsEnabled="{Binding FileClsExtAppendEnabled}"  Margin="30 0 0 0" HorizontalAlignment="Stretch" ColumnDefinitions="*,10,*">
+                        <StackPanel Grid.Column="0">
+                                <TextBlock Margin="0 5 0 10" FontSize="13" Text="{DynamicResource App.Strings.SettingsSubtitleFormatExtension}" />
+                                <TextBox Watermark="{DynamicResource App.Strings.SettingsSubtitleFormatWatermark}" Text="{Binding SubtitleExtAppend}" />  
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                                <TextBlock Margin="0 5 0 10" FontSize="13" Text="{DynamicResource App.Strings.SettingsVideoFormatExtension}" />
+                                <TextBox Watermark="{DynamicResource App.Strings.SettingsVideoFormatWatermark}" Text="{Binding VideoExtAppend}" />
+                        </StackPanel>
+                </Grid>
+                <Border Height="15" />
+                <CheckBox IsChecked="{Binding UpdateCheckEnabled}" Content="{DynamicResource App.Strings.SettingsUpdateCheck}" />
+
+                <Border Height="20" />
+                <TextBlock TextWrapping="Wrap" FontSize="13" LineHeight="26" Foreground="#5f6b7c">
+                        <TextBlock.Inlines>
+                                <Run Text="{DynamicResource App.Strings.SettingsOpenSourceProgram}" />
+                                <LineBreak />
+                                <Run Text="{DynamicResource App.Strings.SettingsConsiderStar1}" />
+                                <Button Classes="hyperlink" Content="{DynamicResource App.Strings.SettingsConsiderStar2}" Margin="0 5 0 0" Command="{Binding OpenLinkCommand}" CommandParameter="https://github.com/qwqcode/SubRenamer" />
+                                <Run Text="{DynamicResource App.Strings.SettingsConsiderStar3}" />
+                        </TextBlock.Inlines>
+                </TextBlock>
+                
+                <Border Height="15" />
+                <Border BorderThickness=".5" BorderBrush="#D2D4D5"></Border>
+                
+                <Border Height="15" />
+                <StackPanel Orientation="Horizontal" Spacing="15">
+                        <Button Classes="hyperlink" Content="{DynamicResource App.Strings.SettingsFeedback}" Command="{Binding OpenLinkCommand}" CommandParameter="https://github.com/qwqcode/SubRenamer/issues/new" />
+                        <Button Classes="hyperlink" Content="{DynamicResource App.Strings.SettingsChangelog}" Command="{Binding OpenLinkCommand}" CommandParameter="https://github.com/qwqcode/SubRenamer/releases" />
+                </StackPanel>
+        </StackPanel>
+</Window>
